@@ -41,10 +41,10 @@ describe "Merchants API", type: :request do
     expect(merchants[:data].count).to eq(20)
   end
 
-  it "returns a subset of merchants based on limit and offset" do
+  it "returns a subset of merchants based on limit and page" do
     create_list(:merchant, 30)
 
-    get '/api/v1/merchants', params: { per_page: 20, offset: 20 }
+    get '/api/v1/merchants', params: { per_page: 20, page: 2 }
 
     expect(response).to be_successful
 
@@ -68,5 +68,19 @@ describe "Merchants API", type: :request do
     expect(merchants[:data].count).to eq(20)
     expect(merchants[:data].first[:attributes][:name]).to eq(Merchant.first.name)
     expect(merchants[:data].last[:attributes][:name]).to eq(Merchant.all[19].name)
+  end
+
+  it "can display results based on page number" do
+    create_list(:merchant, 30)
+
+    get '/api/v1/merchants', params: { per_page: 20, page: 2 }
+
+    expect(response).to be_successful
+
+    merchants = JSON.parse(response.body, symbolize_names: true)
+
+    expect(merchants[:data].count).to eq(10)
+    # expect(merchants[:data].first[:attributes][:name]).to eq(Merchant.first.name)
+    expect(merchants[:data].first[:attributes][:name]).to eq(Merchant.all[20].name)
   end
 end
