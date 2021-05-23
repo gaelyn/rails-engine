@@ -80,7 +80,6 @@ describe "Merchants API", type: :request do
     merchants = JSON.parse(response.body, symbolize_names: true)
 
     expect(merchants[:data].count).to eq(10)
-    # expect(merchants[:data].first[:attributes][:name]).to eq(Merchant.first.name)
     expect(merchants[:data].first[:attributes][:name]).to eq(Merchant.all[20].name)
   end
 end

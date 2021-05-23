@@ -1,6 +1,5 @@
 class Api::V1::MerchantsController < ApplicationController
   def index
-    # @merchants = Merchant.limit(per_page).offset(params[:offset])
     @merchants = Merchant.limit(per_page).offset(page)
     render json: MerchantSerializer.new(@merchants)
   end
@@ -14,7 +13,6 @@ class Api::V1::MerchantsController < ApplicationController
   def page
     page = [params.fetch(:page, 1).to_i, 1].max
     (page - 1) * per_page
-    # params[:page] && params[:page].to_i >= 1 ? params.fetch(:page).to_i : 1
   end
 
   # def merchant_params
