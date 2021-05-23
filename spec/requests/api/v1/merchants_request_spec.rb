@@ -73,7 +73,7 @@ describe "Merchants API", type: :request do
   it "can display results based on page number" do
     create_list(:merchant, 30)
 
-    get '/api/v1/merchants', params: { per_page: 20, page: 2 }
+    get '/api/v1/merchants', params: { page: 2 }
 
     expect(response).to be_successful
 

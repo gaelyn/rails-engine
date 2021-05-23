@@ -1,7 +1,7 @@
-class Api::V1::MerchantsController < ApplicationController
+class Api::V1::ItemsController < ApplicationController
   def index
-    @merchants = Merchant.limit(per_page).offset(page)
-    render json: MerchantSerializer.new(@merchants)
+    @items = Item.limit(per_page).offset(page)
+    render json: ItemSerializer.new(@items)
   end
 
   private
