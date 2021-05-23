@@ -73,14 +73,13 @@ describe "Merchants API", type: :request do
   it "can display results based on page number" do
     create_list(:merchant, 30)
 
-    get '/api/v1/merchants', params: { per_page: 20, page: 2 }
+    get '/api/v1/merchants', params: { page: 2 }
 
     expect(response).to be_successful
 
     merchants = JSON.parse(response.body, symbolize_names: true)
 
     expect(merchants[:data].count).to eq(10)
-    # expect(merchants[:data].first[:attributes][:name]).to eq(Merchant.first.name)
     expect(merchants[:data].first[:attributes][:name]).to eq(Merchant.all[20].name)
   end
 end
