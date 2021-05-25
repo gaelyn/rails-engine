@@ -48,6 +48,8 @@ group :test do
   gem 'capybara'
   gem 'shoulda-matchers'
   gem 'simplecov'
+  gem 'webmock'
+  gem 'vcr'
 end
 
 
