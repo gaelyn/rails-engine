@@ -9,4 +9,9 @@ class Api::V1::MerchantsController < ApplicationController
     render json: MerchantSerializer.new(@merchant)
     # @merchant = MerchantService.find_by_id(params[:id])
   end
+
+  def find
+    @merchant = Merchant.where("name ILIKE ?", "%#{params[:name]}%").order(:name).first
+    render json: MerchantSerializer.new(@merchant)
+  end
 end

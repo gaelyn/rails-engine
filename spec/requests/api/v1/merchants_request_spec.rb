@@ -91,10 +91,21 @@ describe "Merchants API", type: :request do
     merchant = JSON.parse(response.body, symbolize_names: true)
 
     expect(response).to be_successful
-    
+
     expect(merchant.count).to eq(1)
 
     expect(merchant[:data][:attributes]).to have_key(:name)
     expect(merchant[:data][:attributes][:name]).to be_a(String)
+  end
+
+  it 'can find ONE MERCHANT based on search criteria' do
+    merchant1 = Merchant.create!(name: "Turing")
+    merchant2 = Merchant.create!(name: "Ring World")
+    merchant3 = Merchant.create!(name: "Dunder Mifflin")
+    search = "Ring"
+    get "/api/v1/merchants/find?name=#{search}"
+    expect(response).to be_successful
+    merchant = JSON.parse(response.body, symbolize_names: true)
+    expect(merchant[:data][:attributes][:name]).to eq("Ring World")
   end
 end
