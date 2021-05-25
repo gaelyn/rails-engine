@@ -1,6 +1,10 @@
 class Api::V1::ItemsController < ApplicationController
   def index
-    @items = Item.limit(per_page).offset(page)
+    if params[:merchant_id]
+      @items = Merchant.find(params[:merchant_id]).items
+    else
+      @items = Item.limit(per_page).offset(page)
+    end
     render json: ItemSerializer.new(@items)
   end
 
