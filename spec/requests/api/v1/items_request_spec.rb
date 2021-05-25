@@ -87,7 +87,7 @@ describe "Items API", type: :request do
     expect(items[:data].first[:attributes][:name]).to eq(Item.all[20].name)
   end
 
-  it 'can get a single merchant' do
+  it 'can get a single item' do
     id = create(:item).id
 
     get "/api/v1/items/#{id}"
@@ -100,5 +100,23 @@ describe "Items API", type: :request do
 
     expect(item[:data][:attributes]).to have_key(:name)
     expect(item[:data][:attributes][:name]).to be_a(String)
+  end
+
+  it 'can find ALL ITEMS based on search criteria' do
+    merchant = create(:merchant)
+    item1 = merchant.items.create!(name: "The One Ring" ,description: "One ring to rule them all" ,unit_price: 300.52 )
+    item2 = merchant.items.create!(name: "Ring Doorbell",description: "Know when someone's at your door",unit_price: 100.83)
+    item3 = merchant.items.create!(name: "Headphones",description: "Hear your tunes",unit_price: 50.01)
+    item4 = merchant.items.create!(name: "Phone",description: "Call your friends",unit_price: 500.00)
+    item5 = merchant.items.create!(name: "M&Ms",description: "Chocolate",unit_price: 1.65)
+    item6 = merchant.items.create!(name: "Notebook",description: "Take some notes",unit_price: 3.25)
+    item7 = merchant.items.create!(name: "Chicken fingers",description: "fried chicken",unit_price: 3.25)
+
+    query = "name"
+    search = "oo"
+    get "/api/v1/items/find_all?#{query}=#{search}"
+    expect(response).to be_successful
+    items = JSON.parse(response.body, symbolize_names: true)
+    expect(items[:data].count).to eq(2)
   end
 end

@@ -108,4 +108,15 @@ describe "Merchants API", type: :request do
     merchant = JSON.parse(response.body, symbolize_names: true)
     expect(merchant[:data][:attributes][:name]).to eq("Ring World")
   end
+
+  it 'can show error if no match found for search criteria' do
+    merchant1 = Merchant.create!(name: "Turing")
+    merchant2 = Merchant.create!(name: "Ring World")
+    merchant3 = Merchant.create!(name: "Dunder Mifflin")
+    search = "hello"
+    get "/api/v1/merchants/find?name=#{search}"
+    result = JSON.parse(response.body, symbolize_names: true)
+    expect(response.status).to eq(404)
+    expect(result[:error]).to eq("Not found")
+  end
 end
