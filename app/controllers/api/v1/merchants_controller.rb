@@ -7,11 +7,14 @@ class Api::V1::MerchantsController < ApplicationController
   def show
     @merchant = Merchant.find(params[:id])
     render json: MerchantSerializer.new(@merchant)
-    # @merchant = MerchantService.find_by_id(params[:id])
   end
 
   def find
     @merchant = Merchant.where("name ILIKE ?", "%#{params[:name]}%").order(:name).first
-    render json: MerchantSerializer.new(@merchant)
+    if @merchant
+      render json: MerchantSerializer.new(@merchant)
+    else
+      render json: { error: "Not found" }, status: :not_found
+    end
   end
 end
