@@ -113,7 +113,7 @@ describe "Items API", type: :request do
     item7 = merchant.items.create!(name: "Chicken fingers",description: "fried chicken",unit_price: 3.25)
 
     query = "name"
-    search = "oo"
+    search = "ring"
     get "/api/v1/items/find_all?#{query}=#{search}"
     expect(response).to be_successful
     items = JSON.parse(response.body, symbolize_names: true)
@@ -139,10 +139,10 @@ describe "Items API", type: :request do
   end
 
   it 'can create a new item' do
-    merchant = create(:merchant)
+    merchant = Merchant.create!(name: "Sauron")
     item_params = {
-      "name": "Brand New Item",
-      "description": "shiny",
+      "name": "The One Ring",
+      "description": "One ring to rule them all",
       "unit_price": 100.99,
       "merchant_id": merchant.id
     }
@@ -151,9 +151,30 @@ describe "Items API", type: :request do
     post '/api/v1/items', headers: headers, params: JSON.generate(item: item_params)
     created_item = Item.last
     expect(response).to be_successful
+    expect(response).to have_http_status(:created)
+    expect(response.status).to eq(201)
     expect(created_item.name).to eq(item_params[:name])
     expect(created_item.description).to eq(item_params[:description])
     expect(created_item.unit_price).to eq(item_params[:unit_price])
-    expect(created_item.merchant_id).to eq(merchant.id)  
+    expect(created_item.merchant_id).to eq(merchant.id)
+  end
+
+  it "can destroy an item" do
+    merchant = Merchant.create!(name: "Isildur")
+    item_params = {
+      "name": "The One Ring",
+      "description": "Cast it into the fire! Destroy it!",
+      "unit_price": 100.99,
+      "merchant_id": merchant.id
+    }
+    item = Item.create!(item_params)
+
+    expect(Item.count).to eq(1)
+
+    delete "/api/v1/items/#{item.id}"
+
+    expect(response).to be_successful
+    expect(Item.count).to eq(0)
+    expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
   end
 end

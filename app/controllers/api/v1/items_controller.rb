@@ -14,12 +14,16 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def create
-    @item = Item.new(item_params)
+    @item = Item.create(item_params)
     if @item.save
-      render json: ItemSerializer.new(@item)
+      render json: ItemSerializer.new(@item), status: :created
     else
       render :json => {:error =>  "Unprocessable Entity"}.to_json, :status => 422
     end
+  end
+
+  def destroy
+    render json: Item.delete(params[:id])
   end
 
   def find_all
