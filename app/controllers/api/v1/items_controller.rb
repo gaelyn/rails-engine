@@ -26,6 +26,11 @@ class Api::V1::ItemsController < ApplicationController
     render json: Item.delete(params[:id])
   end
 
+  def update
+    @item = Item.update(params[:id], item_params)
+    render json: ItemSerializer.new(@item)
+  end
+
   def find_all
     @items = Item.where("name ilike ?", "%#{params[:name]}%").order(:name)
     render json: ItemSerializer.new(@items)
