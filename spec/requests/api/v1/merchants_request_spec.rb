@@ -136,4 +136,29 @@ describe "Merchants API", type: :request do
     expect(items[:data].first[:id].to_i).to eq(item1.id)
     expect(items[:data].last[:id].to_i).to eq(item3.id)
   end
+
+  it 'can find merchants with the most revenue' do
+    merchant = create(:merchant)
+    item = create(:item, merchant: merchant)
+    invoice = create(:invoice, merchant: merchant)
+    invoice_item = create(:invoice_item, unit_price: 100.00, quantity: 10, item: item, invoice: invoice)
+    transaction = create(:transaction, invoice: invoice)
+
+    merchant2 = create(:merchant)
+    item2 = create(:item, merchant: merchant2)
+    invoice2 = create(:invoice, merchant: merchant2)
+    invoice_item2 = create(:invoice_item, unit_price: 1000.00, quantity: 10, item: item2, invoice: invoice2)
+    transaction2 = create(:transaction, invoice: invoice2)
+
+    merchant3 = create(:merchant)
+    item3 = create(:item, merchant: merchant3)
+    invoice3 = create(:invoice, merchant: merchant3)
+    invoice_item3 = create(:invoice_item, unit_price: 500.00, quantity: 10, item: item3, invoice: invoice3)
+    transaction3 = create(:transaction, invoice: invoice3)
+
+    x = 3
+    get "/api/v1/revenue/merchants?quantity=#{x}"
+
+    expect(response).to be_successful
+  end
 end
