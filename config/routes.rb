@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       end
 
       get 'revenue/merchants', to: 'merchants#most_revenue'
+      get 'revenue/merchants/:id', to: 'merchants#total_revenue'
       get 'revenue/items', to: 'items#most_revenue'
     end
   end

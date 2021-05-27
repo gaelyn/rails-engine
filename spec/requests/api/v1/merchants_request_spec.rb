@@ -162,10 +162,41 @@ describe "Merchants API", type: :request do
     expect(response).to be_successful
 
     merchants = JSON.parse(response.body, symbolize_names: true)
-    
+
     expect(merchants[:data].count).to eq(x)
     expect(merchants[:data][0][:attributes][:name]).to eq(merchant2.name)
     expect(merchants[:data][0][:attributes]).to have_key(:revenue)
     expect(merchants[:data][0][:attributes][:revenue]).to be_a(Float)
+  end
+
+  it 'can get total revenue for a given merchant' do
+    merchant1 = create(:merchant)
+    item = create(:item, merchant: merchant1)
+    invoice = create(:invoice, merchant: merchant1)
+    invoice_item = create(:invoice_item, unit_price: 100.00, quantity: 10, item: item, invoice: invoice)
+    transaction = create(:transaction, invoice: invoice)
+
+    merchant2 = create(:merchant)
+    item2 = create(:item, merchant: merchant2)
+    invoice2 = create(:invoice, merchant: merchant2)
+    invoice_item2 = create(:invoice_item, unit_price: 1000.00, quantity: 10, item: item2, invoice: invoice2)
+    transaction2 = create(:transaction, invoice: invoice2)
+
+    merchant3 = create(:merchant)
+    item3 = create(:item, merchant: merchant3)
+    invoice3 = create(:invoice, merchant: merchant3)
+    invoice_item3 = create(:invoice_item, unit_price: 500.00, quantity: 10, item: item3, invoice: invoice3)
+    transaction3 = create(:transaction, invoice: invoice3)
+
+    get "/api/v1/revenue/merchants/#{merchant1.id}"
+
+    expect(response).to be_successful
+
+    merchant = JSON.parse(response.body, symbolize_names: true)
+
+    expect(merchant[:data][:attributes]).to_not have_key(:name)
+    expect(merchant[:data][:attributes]).to have_key(:revenue)
+    expect(merchant[:data][:attributes][:revenue]).to be_a(Float)
+    expect(merchant[:data][:attributes][:revenue]).to eq(merchant1.total_revenue)
   end
 end
