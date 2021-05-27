@@ -20,6 +20,6 @@ class Api::V1::MerchantsController < ApplicationController
 
   def most_revenue
     @merchants = Merchant.most_revenue(params[:quantity])
-    render json: MerchantNameRevenueSerializer.new(@merchants)
+    render json: MerchantRevenueSerializer.new(@merchants)
   end
 end
