@@ -199,4 +199,34 @@ describe "Merchants API", type: :request do
     expect(merchant[:data][:attributes][:revenue]).to be_a(Float)
     expect(merchant[:data][:attributes][:revenue]).to eq(merchant1.total_revenue)
   end
+
+  it 'can get total potential revenue for a given merchants unshipped items' do
+    merchant1 = create(:merchant)
+    item = create(:item, merchant: merchant1)
+    invoice1 = create(:invoice, status: "pending", merchant: merchant1)
+    invoice2 = create(:invoice, status: "shipped", merchant: merchant1)
+    invoice_item1 = create(:invoice_item, unit_price: 100.00, quantity: 10, item: item, invoice: invoice1)
+    invoice_item2 = create(:invoice_item, unit_price: 200.00, quantity: 10, item: item, invoice: invoice2)
+    transaction1 = create(:transaction, invoice: invoice1)
+    transaction2 = create(:transaction, invoice: invoice2)
+
+    # merchant2 = create(:merchant)
+    # item2 = create(:item, merchant: merchant2)
+    # invoice2 = create(:invoice, merchant: merchant2)
+    # invoice_item2 = create(:invoice_item, unit_price: 1000.00, quantity: 10, item: item2, invoice: invoice2)
+    # transaction2 = create(:transaction, invoice: invoice2)
+    #
+    # merchant3 = create(:merchant)
+    # item3 = create(:item, merchant: merchant3)
+    # invoice3 = create(:invoice, merchant: merchant3)
+    # invoice_item3 = create(:invoice_item, unit_price: 500.00, quantity: 10, item: item3, invoice: invoice3)
+    # transaction3 = create(:transaction, invoice: invoice3)
+    x = 1
+    get "/api/v1/revenue/unshipped?quantity=#{x}"
+
+    expect(response).to be_successful
+    require "pry"; binding.pry
+    # merchant = JSON.parse(response.body, symbolize_names: true)
+
+  end
 end

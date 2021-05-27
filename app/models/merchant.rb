@@ -23,4 +23,13 @@ class Merchant < ApplicationRecord
     .where("transactions.result = 'success'")
     .sum("quantity * unit_price")
   end
+
+  def self.potential_revenue(x)
+    joins(invoice_items: {invoice: :transactions})
+    .where("transactions.result = 'success' AND invoices.status = 'pending'")
+    .group("merchants.id")
+    .select("merchants.*, SUM(invoice_items.quantity * invoice_items.unit_price) AS potential_revenue")
+    .order("potential_revenue DESC")
+    .limit(x)
+  end
 end
