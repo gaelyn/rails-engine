@@ -37,8 +37,9 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def most_revenue
-    params[:quantity] = 10 if !params[:quantity] == Integer 
-    @items = Item.most_revenue(params[:quantity])
+    x = params[:quantity].to_i
+    x = 10 if (x.nil? || x == 0)
+    @items = Item.most_revenue(x)
     render json: ItemRevenueSerializer.new(@items)
   end
 
