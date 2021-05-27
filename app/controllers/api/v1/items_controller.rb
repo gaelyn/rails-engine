@@ -36,6 +36,12 @@ class Api::V1::ItemsController < ApplicationController
     render json: ItemSerializer.new(@items)
   end
 
+  def most_revenue
+    params[:quantity] = 10 if !params[:quantity] == Integer 
+    @items = Item.most_revenue(params[:quantity])
+    render json: ItemRevenueSerializer.new(@items)
+  end
+
   private
 
   def item_params
