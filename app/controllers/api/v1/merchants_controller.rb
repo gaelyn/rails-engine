@@ -17,4 +17,9 @@ class Api::V1::MerchantsController < ApplicationController
       render json: { error: "Not found" }, status: :not_found
     end
   end
+
+  def most_revenue
+    @merchants = Merchant.most_revenue(params[:quantity])
+    render json: MerchantNameRevenueSerializer.new(@merchants)
+  end
 end

@@ -156,9 +156,16 @@ describe "Merchants API", type: :request do
     invoice_item3 = create(:invoice_item, unit_price: 500.00, quantity: 10, item: item3, invoice: invoice3)
     transaction3 = create(:transaction, invoice: invoice3)
 
-    x = 3
+    x = 2
     get "/api/v1/revenue/merchants?quantity=#{x}"
 
     expect(response).to be_successful
+
+    merchants = JSON.parse(response.body, symbolize_names: true)
+    
+    expect(merchants[:data].count).to eq(x)
+    expect(merchants[:data][0][:attributes][:name]).to eq(merchant2.name)
+    expect(merchants[:data][0][:attributes]).to have_key(:revenue)
+    expect(merchants[:data][0][:attributes][:revenue]).to be_a(Float)
   end
 end
