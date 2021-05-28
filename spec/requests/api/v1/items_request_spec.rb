@@ -159,6 +159,21 @@ describe "Items API", type: :request do
     expect(created_item.merchant_id).to eq(merchant.id)
   end
 
+  it 'shows error if item cannot be created due to missing params' do
+    merchant = Merchant.create!(name: "Sauron")
+    item_params = {
+      "name": "The One Ring",
+      "unit_price": 100.99,
+      "merchant_id": merchant.id
+    }
+    headers = {"CONTENT_TYPE" => "application/json"}
+
+    post '/api/v1/items', headers: headers, params: JSON.generate(item: item_params)
+
+    expect(response.status).to eq(422)
+    expect(response).to have_http_status(:unprocessable_entity)
+  end
+
   it "can destroy an item" do
     merchant = Merchant.create!(name: "Isildur")
     item_params = {

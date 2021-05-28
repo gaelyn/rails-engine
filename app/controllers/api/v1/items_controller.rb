@@ -11,8 +11,11 @@ class Api::V1::ItemsController < ApplicationController
 
   def create
     @item = Item.create(item_params)
-    unprocessable_entity if !@item.save
-    render json: ItemSerializer.new(@item), status: :created
+    if @item.save
+      render json: ItemSerializer.new(@item), status: :created
+    else
+      unprocessable_entity
+    end
   end
 
   def destroy
