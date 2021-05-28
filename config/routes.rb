@@ -1,23 +1,27 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      get '/merchants/find', to: 'merchants#find'
-
+      #merchants
       resources :merchants, only: [:index, :show], controller: 'merchants' do
-        resources :items, only: [:index]
+        resources :items, only: [:index], controller: :merchant_items
+        collection do
+          get '/find', to: 'merchants#find'
+        end
       end
-
-      get '/items/find_all', to: 'items#find_all'
-
-      # resources :items, only: [:index, :show, :create, :destroy, :update] do
+      #items
       resources :items do
         resources :merchant, only: [:index], controller: :items_merchant
+        collection do
+          get '/find_all', to: 'items#find_all'
+        end
       end
-
-      get 'revenue/merchants', to: 'merchants#most_revenue'
-      get 'revenue/unshipped', to: 'merchants#potential_revenue'
-      get 'revenue/merchants/:id', to: 'merchants#total_revenue'
-      get 'revenue/items', to: 'items#most_revenue'
+      #non-RESTful
+      namespace :revenue do
+        get '/unshipped', to: 'merchants#potential_revenue'
+        get '/merchants', to: 'merchants#most_revenue'
+        get '/merchants/:id', to: 'merchants#total_revenue'
+        get '/items', to: 'items#most_revenue'
+      end
     end
   end
 end

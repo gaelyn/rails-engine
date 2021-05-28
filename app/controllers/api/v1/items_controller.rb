@@ -1,10 +1,6 @@
 class Api::V1::ItemsController < ApplicationController
   def index
-    if params[:merchant_id]
-      @items = Merchant.find(params[:merchant_id]).items
-    else
-      @items = Item.limit(per_page).offset(page)
-    end
+    @items = Item.limit(per_page).offset(page)
     render json: ItemSerializer.new(@items)
   end
 
@@ -18,7 +14,7 @@ class Api::V1::ItemsController < ApplicationController
     if @item.save
       render json: ItemSerializer.new(@item), status: :created
     else
-      render :json => {:error =>  "Unprocessable Entity"}.to_json, :status => 422
+      unprocessable_entity
     end
   end
 
@@ -28,19 +24,13 @@ class Api::V1::ItemsController < ApplicationController
 
   def update
     @item = Item.update(params[:id], item_params)
+    no_merchant_error
     render json: ItemSerializer.new(@item)
   end
 
   def find_all
     @items = Item.where("name ilike ?", "%#{params[:name]}%").order(:name)
     render json: ItemSerializer.new(@items)
-  end
-
-  def most_revenue
-    x = params[:quantity].to_i
-    x = 10 if (x.nil? || x == 0)
-    @items = Item.most_revenue(x)
-    render json: ItemRevenueSerializer.new(@items)
   end
 
   private
