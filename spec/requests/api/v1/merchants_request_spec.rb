@@ -225,8 +225,10 @@ describe "Merchants API", type: :request do
     get "/api/v1/revenue/unshipped?quantity=#{x}"
 
     expect(response).to be_successful
-    require "pry"; binding.pry
-    # merchant = JSON.parse(response.body, symbolize_names: true)
 
+    merchant = JSON.parse(response.body, symbolize_names: true)
+    
+    expect(merchant[:data][0][:attributes]).to have_key(:potential_revenue)
+    expect(merchant[:data][0][:attributes][:potential_revenue]).to eq (1000.00)
   end
 end
