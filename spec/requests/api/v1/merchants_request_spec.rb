@@ -210,25 +210,33 @@ describe "Merchants API", type: :request do
     transaction1 = create(:transaction, invoice: invoice1)
     transaction2 = create(:transaction, invoice: invoice2)
 
-    # merchant2 = create(:merchant)
-    # item2 = create(:item, merchant: merchant2)
-    # invoice2 = create(:invoice, merchant: merchant2)
-    # invoice_item2 = create(:invoice_item, unit_price: 1000.00, quantity: 10, item: item2, invoice: invoice2)
-    # transaction2 = create(:transaction, invoice: invoice2)
-    #
-    # merchant3 = create(:merchant)
-    # item3 = create(:item, merchant: merchant3)
-    # invoice3 = create(:invoice, merchant: merchant3)
-    # invoice_item3 = create(:invoice_item, unit_price: 500.00, quantity: 10, item: item3, invoice: invoice3)
-    # transaction3 = create(:transaction, invoice: invoice3)
-    x = 1
+    merchant2 = create(:merchant)
+    item2 = create(:item, merchant: merchant2)
+    invoice3 = create(:invoice, status: "pending", merchant: merchant2)
+    invoice4 = create(:invoice, status: "shipped", merchant: merchant2)
+    invoice_item3 = create(:invoice_item, unit_price: 10.00, quantity: 10, item: item2, invoice: invoice3)
+    invoice_item4 = create(:invoice_item, unit_price: 20.00, quantity: 10, item: item2, invoice: invoice4)
+    transaction3 = create(:transaction, invoice: invoice3)
+    transaction4 = create(:transaction, invoice: invoice4)
+
+    merchant3 = create(:merchant)
+    item3 = create(:item, merchant: merchant3)
+    invoice5 = create(:invoice, status: "pending", merchant: merchant3)
+    invoice6 = create(:invoice, status: "shipped", merchant: merchant3)
+    invoice_item5 = create(:invoice_item, unit_price: 1.00, quantity: 10, item: item3, invoice: invoice5)
+    invoice_item6 = create(:invoice_item, unit_price: 2.00, quantity: 10, item: item3, invoice: invoice6)
+    transaction5 = create(:transaction, invoice: invoice5)
+    transaction6 = create(:transaction, invoice: invoice6)
+
+    x = 2
+
     get "/api/v1/revenue/unshipped?quantity=#{x}"
 
     expect(response).to be_successful
 
-    merchant = JSON.parse(response.body, symbolize_names: true)
+    merchants = JSON.parse(response.body, symbolize_names: true)
     
-    expect(merchant[:data][0][:attributes]).to have_key(:potential_revenue)
-    expect(merchant[:data][0][:attributes][:potential_revenue]).to eq (1000.00)
+    expect(merchants[:data].count).to eq(2)
+    expect( merchants[:data].last[:attributes][:potential_revenue]).to eq (100.0)
   end
 end
