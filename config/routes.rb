@@ -3,7 +3,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       #merchants
       resources :merchants, only: [:index, :show], controller: 'merchants' do
-        resources :items, only: [:index]
+        resources :items, only: [:index], controller: :merchant_items
         collection do
           get '/find', to: 'merchants#find'
         end
